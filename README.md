@@ -269,7 +269,7 @@ export DB_PASSWORD="tu_contraseña"
 
 | Integrante |
 |---|
-| **Marco Adrián Padilla Triviño** ([@Adrizzx](https://github.com/Adrizzx)) |
+| **Marco Adrian Padilla Triviño** ([@Adrizzx](https://github.com/Adrizzx)) |
 | Kenned Sigcha |
 | Damián Toscano |
 

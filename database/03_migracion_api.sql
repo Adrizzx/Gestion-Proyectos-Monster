@@ -1,0 +1,29 @@
+ =============================================================================
+
+USE gestion_proyectos_monster;
+
+-- Ampliar el nombre y agregar los campos de control -------------------------
+ALTER TABLE GEPRO_PROYECT
+    MODIFY COLUMN GEPRO_NOMBRE VARCHAR(100) NOT NULL;
+
+ALTER TABLE GEPRO_PROYECT
+    ADD COLUMN IF NOT EXISTS GEPRO_DESCRI VARCHAR(255)          AFTER GEPRO_NOMBRE,
+    ADD COLUMN IF NOT EXISTS GEPRO_PRESUP DECIMAL(12,2) NOT NULL DEFAULT 0 AFTER GEPRO_DESCRI,
+    ADD COLUMN IF NOT EXISTS GEPRO_GASTO  DECIMAL(12,2) NOT NULL DEFAULT 0 AFTER GEPRO_PRESUP,
+    ADD COLUMN IF NOT EXISTS GEPRO_FECINI DATE                  AFTER GEPRO_GASTO,
+    ADD COLUMN IF NOT EXISTS GEPRO_FECFIN DATE                  AFTER GEPRO_FECINI,
+    ADD COLUMN IF NOT EXISTS GEPRO_AVANCE INT          NOT NULL DEFAULT 0 AFTER GEPRO_FECFIN,
+    ADD COLUMN IF NOT EXISTS GEPRO_ESTADO VARCHAR(20)  NOT NULL DEFAULT 'PLANIFICADO' AFTER GEPRO_AVANCE,
+    ADD COLUMN IF NOT EXISTS GEPRO_RECURS VARCHAR(255) AFTER GEPRO_ESTADO;
+
+-- Datos de ejemplo para el proyecto existente (P01) -------------------------
+UPDATE GEPRO_PROYECT
+   SET GEPRO_DESCRI = 'Plataforma web para la gestión integral de proyectos de la organización.',
+       GEPRO_PRESUP = 20000.00,
+       GEPRO_GASTO  = 8500.00,
+       GEPRO_FECINI = '2026-07-20',
+       GEPRO_FECFIN = '2026-08-20',
+       GEPRO_AVANCE = 45,
+       GEPRO_ESTADO = 'EN_PROGRESO',
+       GEPRO_RECURS = '4 laptops, licencias de software, servidor de pruebas'
+ WHERE GEPRO_CODIGO = 'P01';

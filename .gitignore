@@ -1,0 +1,15 @@
+build/
+dist/
+nbproject/private/
+*.class
+*.war
+.claude/
+.vscode/
+.idea/
+*.log
+.env
+.env.*
+**/CREDENCIALES*
+**/credenciales*
+Thumbs.db
+desktop.ini

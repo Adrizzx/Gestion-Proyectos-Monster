@@ -1,0 +1,324 @@
+<%@page import="ec.edu.monster.controlador.SeguridadWeb"%>
+<%@page import="ec.edu.monster.modelo.DAOOPCIONES"%>
+<%@page import="ec.edu.monster.modelo.Usuario"%>
+<%
+    Usuario usuarioMenu = SeguridadWeb.usuarioSesion(request);
+    String ctxMenu = request.getContextPath();
+
+    String _nombre = usuarioMenu == null ? "" : usuarioMenu.getNombreEmpleado();
+    if (_nombre == null) _nombre = "";
+    _nombre = _nombre.replace("&","&amp;").replace("<","&lt;").replace(">","&gt;")
+                     .replace("\"","&quot;").replace("'","&#39;");
+
+    String _rol = usuarioMenu == null ? "" : usuarioMenu.getRolUsuario();
+    if (_rol == null) _rol = "";
+    _rol = _rol.replace("&","&amp;").replace("<","&lt;").replace(">","&gt;")
+               .replace("\"","&quot;").replace("'","&#39;");
+
+    // URI actual para resaltar el ítem activo
+    String _uri = request.getRequestURI();
+
+    // Helpers de permisos (llama a caché en sesión; 1 hit BD por sesión)
+    // OPC codes: 001-016 definidos en DAOOPCIONES
+%>
+<aside class="sidebar">
+
+    <!-- ── Marca ──────────────────────────────────────────────── -->
+    <div class="sidebar-brand">
+        <span class="brand-mark small-mark">GM</span>
+        <div>
+            <strong>Gesti&oacute;n de Proyectos Monster</strong>
+            <span><%= _rol %></span>
+        </div>
+    </div>
+
+    <!-- ── Usuario activo ─────────────────────────────────────── -->
+    <div class="sidebar-user">
+        <span>Sesi&oacute;n activa</span>
+        <strong><%= _nombre %></strong>
+    </div>
+
+    <!-- ── Navegación ─────────────────────────────────────────── -->
+    <nav class="side-nav">
+
+        <!-- Inicio (siempre visible) -->
+        <a href="<%= ctxMenu + SeguridadWeb.rutaDashboard(usuarioMenu) %>"
+           class="nav-home <%= _uri.contains("dashboard") ? "active" : "" %>">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            Inicio
+        </a>
+
+        <!-- ══ Categoría 1: Personal (RRHH) ════════════════════ -->
+        <% if (SeguridadWeb.tieneOpcionCualquiera(request,
+                DAOOPCIONES.OPC_DEPARTAMENTOS, DAOOPCIONES.OPC_GESTION_PERSONAL,
+                DAOOPCIONES.OPC_FAMILIARES,    DAOOPCIONES.OPC_ORGANIGRAMA,
+                DAOOPCIONES.OPC_REPORTE_PERSONAL)) { %>
+        <div class="nav-group" id="ng-personal">
+            <button class="nav-group-btn" type="button"
+                    onclick="toggleGrupo('ng-personal')"
+                    aria-expanded="true" aria-controls="ng-personal-items">
+                <svg class="ng-icon" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                Personal
+                <span class="ng-arrow">&#9660;</span>
+            </button>
+            <div class="nav-group-items" id="ng-personal-items">
+
+                <!-- Tablas Básicas -->
+                <% if (SeguridadWeb.tieneOpcionCualquiera(request,
+                        DAOOPCIONES.OPC_DEPARTAMENTOS, DAOOPCIONES.OPC_GESTION_PERSONAL)) { %>
+                <span class="nav-sub-title">Tablas B&aacute;sicas</span>
+                <% if (SeguridadWeb.tieneOpcion(request, DAOOPCIONES.OPC_DEPARTAMENTOS)) { %>
+                <a href="<%= ctxMenu %>/admin/departamentos"
+                   class="nav-item <%= _uri.contains("departamentos") ? "active" : "" %>">
+                    Departamentos
+                </a>
+                <% } %>
+                <% if (SeguridadWeb.tieneOpcion(request, DAOOPCIONES.OPC_GESTION_PERSONAL)) { %>
+                <a href="<%= ctxMenu %>/srvEmpleado"
+                   class="nav-item <%= _uri.contains("srvEmpleado") ? "active" : "" %>">
+                    Gesti&oacute;n de Personal
+                </a>
+                <% } %>
+                <% } %>
+
+                <!-- Procesos -->
+                <% if (SeguridadWeb.tieneOpcionCualquiera(request,
+                        DAOOPCIONES.OPC_ORGANIGRAMA, DAOOPCIONES.OPC_FAMILIARES)) { %>
+                <span class="nav-sub-title">Procesos</span>
+                <% if (SeguridadWeb.tieneOpcion(request, DAOOPCIONES.OPC_ORGANIGRAMA)) { %>
+                <a href="<%= ctxMenu %>/admin/organigrama"
+                   class="nav-item <%= _uri.contains("organigrama") ? "active" : "" %>">
+                    Organigrama
+                </a>
+                <% } %>
+                <% if (SeguridadWeb.tieneOpcion(request, DAOOPCIONES.OPC_FAMILIARES)) { %>
+                <a href="<%= ctxMenu %>/views/personal/familiares.jsp"
+                   class="nav-item <%= _uri.contains("familiares") ? "active" : "" %>">
+                    Gestionar Familiares
+                </a>
+                <% } %>
+                <% } %>
+
+                <!-- Reportes -->
+                <% if (SeguridadWeb.tieneOpcion(request, DAOOPCIONES.OPC_REPORTE_PERSONAL)) { %>
+                <span class="nav-sub-title">Reportes</span>
+                <a href="<%= ctxMenu %>/admin/reporte"
+                   class="nav-item <%= _uri.contains("/reporte") ? "active" : "" %>">
+                    Reporte de Personal
+                </a>
+                <% } %>
+
+            </div>
+        </div>
+        <% } %>
+
+        <!-- ══ Categoría 2: Finanzas ════════════════════════════ -->
+        <% if (SeguridadWeb.tieneOpcionCualquiera(request,
+                DAOOPCIONES.OPC_PROYECTOS,        DAOOPCIONES.OPC_ASIGNAR_PERSONAL,
+                DAOOPCIONES.OPC_APROBACION_HORAS, DAOOPCIONES.OPC_REPORTES_HORAS,
+                DAOOPCIONES.OPC_REGISTRAR_HORAS,  DAOOPCIONES.OPC_REPORTE_PROYECTOS)) { %>
+        <div class="nav-group" id="ng-finanzas">
+            <button class="nav-group-btn" type="button"
+                    onclick="toggleGrupo('ng-finanzas')"
+                    aria-expanded="true" aria-controls="ng-finanzas-items">
+                <svg class="ng-icon" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                    <rect x="2" y="3" width="20" height="14" rx="2"/>
+                    <path d="M8 21h8M12 17v4"/>
+                    <circle cx="12" cy="10" r="3"/>
+                </svg>
+                Proyectos
+                <span class="ng-arrow">&#9660;</span>
+            </button>
+            <div class="nav-group-items" id="ng-finanzas-items">
+
+                <!-- Tablas Básicas -->
+                <% if (SeguridadWeb.tieneOpcion(request, DAOOPCIONES.OPC_PROYECTOS)) { %>
+                <span class="nav-sub-title">Tablas B&aacute;sicas</span>
+                <a href="<%= ctxMenu %>/views/proyectos/gestion.jsp"
+                   class="nav-item <%= _uri.contains("proyectos") ? "active" : "" %>">
+                    Gesti&oacute;n de Proyectos
+                </a>
+                <% } %>
+
+                <!-- Procesos -->
+                <% if (SeguridadWeb.tieneOpcionCualquiera(request,
+                        DAOOPCIONES.OPC_ASIGNAR_PERSONAL, DAOOPCIONES.OPC_APROBACION_HORAS,
+                        DAOOPCIONES.OPC_REGISTRAR_HORAS)) { %>
+                <span class="nav-sub-title">Procesos</span>
+                <% if (SeguridadWeb.tieneOpcion(request, DAOOPCIONES.OPC_ASIGNAR_PERSONAL)) { %>
+                <a href="<%= ctxMenu %>/views/proyectos/asignar.jsp"
+                   class="nav-item <%= _uri.contains("asignar") ? "active" : "" %>">
+                    Asignaci&oacute;n de Personal
+                </a>
+                <% } %>
+                <% if (SeguridadWeb.tieneOpcion(request, DAOOPCIONES.OPC_APROBACION_HORAS)) { %>
+                <a href="<%= ctxMenu %>/views/proyectos/aprobar-horas.jsp"
+                   class="nav-item <%= _uri.contains("aprobar") ? "active" : "" %>">
+                    Aprobaci&oacute;n de Horas
+                </a>
+                <% } %>
+                <% if (SeguridadWeb.tieneOpcion(request, DAOOPCIONES.OPC_REGISTRAR_HORAS)) { %>
+                <a href="<%= ctxMenu %>/views/tiempos/registrar.jsp"
+                   class="nav-item <%= _uri.contains("registrar") ? "active" : "" %>">
+                    Registrar Horas Reales
+                </a>
+                <% } %>
+                <% } %>
+
+                <!-- Reportes -->
+                <% if (SeguridadWeb.tieneOpcionCualquiera(request,
+                        DAOOPCIONES.OPC_REPORTES_HORAS, DAOOPCIONES.OPC_REPORTE_PROYECTOS)) { %>
+                <span class="nav-sub-title">Reportes</span>
+                <% if (SeguridadWeb.tieneOpcion(request, DAOOPCIONES.OPC_REPORTES_HORAS)) { %>
+                <a href="<%= ctxMenu %>/views/proyectos/reportes-horas.jsp"
+                   class="nav-item <%= _uri.contains("reportes-horas") ? "active" : "" %>">
+                    Reportes de Horas
+                </a>
+                <% } %>
+                <% if (SeguridadWeb.tieneOpcion(request, DAOOPCIONES.OPC_REPORTE_PROYECTOS)) { %>
+                <a href="<%= ctxMenu %>/proyectos/reporte"
+                   class="nav-item <%= _uri.contains("/proyectos/reporte") ? "active" : "" %>">
+                    Reporte de Proyectos
+                </a>
+                <% } %>
+                <% } %>
+
+            </div>
+        </div>
+        <% } %>
+
+        <!-- ══ Categoría 3: Procesos de Seguridad ═══════════════ -->
+        <% if (SeguridadWeb.tieneOpcionCualquiera(request,
+                DAOOPCIONES.OPC_GESTION_USUARIOS,  DAOOPCIONES.OPC_ASIGNAR_PERFILES,
+                DAOOPCIONES.OPC_GESTION_CLAVE,     DAOOPCIONES.OPC_ASIGNAR_OPCIONES,
+                DAOOPCIONES.OPC_CAMBIAR_CLAVE,     DAOOPCIONES.OPC_GESTION_PERFILES)) { %>
+        <div class="nav-group" id="ng-seguridad">
+            <button class="nav-group-btn" type="button"
+                    onclick="toggleGrupo('ng-seguridad')"
+                    aria-expanded="true" aria-controls="ng-seguridad-items">
+                <svg class="ng-icon" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+                Procesos de Seguridad
+                <span class="ng-arrow">&#9660;</span>
+            </button>
+            <div class="nav-group-items" id="ng-seguridad-items">
+
+                <!-- Tablas Básicas -->
+                <% if (SeguridadWeb.tieneOpcionCualquiera(request,
+                        DAOOPCIONES.OPC_GESTION_USUARIOS, DAOOPCIONES.OPC_GESTION_PERFILES)) { %>
+                <span class="nav-sub-title">Tablas B&aacute;sicas</span>
+                <% if (SeguridadWeb.tieneOpcion(request, DAOOPCIONES.OPC_GESTION_USUARIOS)) { %>
+                <a href="<%= ctxMenu %>/admin/seguridad"
+                   class="nav-item <%= _uri.contains("/seguridad") && !_uri.contains("asignar") && !_uri.contains("cambiar") ? "active" : "" %>">
+                    Gesti&oacute;n de Usuarios
+                </a>
+                <% } %>
+                <% if (SeguridadWeb.tieneOpcion(request, DAOOPCIONES.OPC_GESTION_PERFILES)) { %>
+                <a href="<%= ctxMenu %>/admin/perfiles"
+                   class="nav-item <%= _uri.contains("/admin/perfiles") ? "active" : "" %>">
+                    Gesti&oacute;n de Perfiles
+                </a>
+                <% } %>
+                <% } %>
+
+                <!-- Procesos -->
+                <% if (SeguridadWeb.tieneOpcionCualquiera(request,
+                        DAOOPCIONES.OPC_ASIGNAR_PERFILES, DAOOPCIONES.OPC_GESTION_CLAVE,
+                        DAOOPCIONES.OPC_ASIGNAR_OPCIONES)) { %>
+                <span class="nav-sub-title">Procesos</span>
+                <% if (SeguridadWeb.tieneOpcion(request, DAOOPCIONES.OPC_ASIGNAR_PERFILES)) { %>
+                <a href="<%= ctxMenu %>/admin/asignar-perfil"
+                   class="nav-item <%= _uri.contains("asignar-perfil") ? "active" : "" %>">
+                    Asignar Usuarios al Perfil
+                </a>
+                <% } %>
+                <% if (SeguridadWeb.tieneOpcion(request, DAOOPCIONES.OPC_GESTION_CLAVE)) { %>
+                <a href="<%= ctxMenu %>/admin/gestionar-clave"
+                   class="nav-item <%= _uri.contains("gestionar-clave") ? "active" : "" %>">
+                    Gesti&oacute;n de Contrase&ntilde;as
+                </a>
+                <% } %>
+                <% if (SeguridadWeb.tieneOpcion(request, DAOOPCIONES.OPC_ASIGNAR_OPCIONES)) { %>
+                <a href="<%= ctxMenu %>/admin/asignar-opciones"
+                   class="nav-item <%= _uri.contains("asignar-opciones") ? "active" : "" %>">
+                    Asignar Opciones al Perfil
+                </a>
+                <% } %>
+                <% } %>
+
+                <!-- Personal -->
+                <% if (SeguridadWeb.tieneOpcion(request, DAOOPCIONES.OPC_CAMBIAR_CLAVE)) { %>
+                <span class="nav-sub-title">Personal</span>
+                <a href="<%= ctxMenu %>/seguridad/cambiar-clave"
+                   class="nav-item <%= _uri.contains("cambiar-clave") ? "active" : "" %>">
+                    Cambiar Mi Contrase&ntilde;a
+                </a>
+                <% } %>
+
+            </div>
+        </div>
+        <% } %>
+
+    </nav>
+
+    <!-- ── Salir ──────────────────────────────────────────────── -->
+    <a class="logout-link" href="<%= ctxMenu %>/srvSeguridad?accion=salir">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2.2" stroke-linecap="round" style="margin-right:7px;flex:0 0 auto">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Salir
+    </a>
+</aside>
+
+<script>
+(function () {
+    var STORE_KEY = 'sidebar_groups';
+
+    function getState() {
+        try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch(e) { return {}; }
+    }
+    function saveState(st) {
+        try { localStorage.setItem(STORE_KEY, JSON.stringify(st)); } catch(e) {}
+    }
+
+    window.toggleGrupo = function(id) {
+        var items = document.getElementById(id + '-items');
+        var btn   = document.querySelector('#' + id + ' .nav-group-btn');
+        if (!items || !btn) return;
+        var collapsed = items.classList.toggle('ng-collapsed');
+        btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+        var st = getState();
+        st[id] = collapsed ? 'closed' : 'open';
+        saveState(st);
+    };
+
+    // Restaurar estado guardado al cargar
+    document.addEventListener('DOMContentLoaded', function() {
+        var st = getState();
+        ['ng-personal', 'ng-finanzas', 'ng-seguridad', 'ng-reportes-proyectos'].forEach(function (id) {
+            if (st[id] === 'closed') {
+                var items = document.getElementById(id + '-items');
+                var btn   = document.querySelector('#' + id + ' .nav-group-btn');
+                if (items) items.classList.add('ng-collapsed');
+                if (btn)   btn.setAttribute('aria-expanded', 'false');
+            }
+        });
+    });
+}());
+</script>

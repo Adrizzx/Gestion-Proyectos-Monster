@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🏢 Gestión de Proyectos Monster
+# Gestión de Proyectos Monster
 
 ### Sistema web de talento humano y proyectos con control de acceso por roles, construido de extremo a extremo: requisitos, UML, modelo de datos e implementación en Java EE
 
@@ -9,34 +9,74 @@
 [![JSP](https://img.shields.io/badge/JSP%20%2B%20Servlets-MVC-5382A1?style=for-the-badge)](https://jakarta.ee/specifications/pages/)
 [![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
 [![Payara](https://img.shields.io/badge/Payara-GlassFish-1F4E79?style=for-the-badge)](https://www.payara.fish/)
-[![UML](https://img.shields.io/badge/UML-PowerDesigner-6E4C9E?style=for-the-badge)](#-documentación-de-ingeniería)
+[![UML](https://img.shields.io/badge/UML-PowerDesigner-6E4C9E?style=for-the-badge)](#documentación-de-ingeniería)
+
+<img src="media/dashboard_admin.jpg" alt="Panel del administrador" width="90%">
 
 </div>
 
 ---
 
-## 📖 Descripción
+## Descripción
 
 **Gestión de Proyectos Monster** es un sistema para la empresa ficticia *Monster* que centraliza la información del personal (empleados, cargos, departamentos, formación académica, cargas familiares) y su asignación a proyectos, con un **módulo de seguridad** completo: usuarios, perfiles, opciones de menú por perfil y políticas de contraseña.
 
 Lo que distingue a este proyecto es que recorre **todo el ciclo de ingeniería de software**: especificación de requisitos (ERS), especificación de casos de uso (ECUD), diagramas UML, modelo de datos conceptual → lógico → físico, scripts de base de datos, implementación y manual técnico.
 
-## ✨ Funcionalidades
+## Capturas
+
+<table>
+  <tr>
+    <td width="50%"><img src="media/login.jpg" alt="Inicio de sesión"></td>
+    <td width="50%"><img src="media/personal.jpg" alt="Gestión de personal"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Inicio de sesión</sub></td>
+    <td align="center"><sub>Gestión de personal</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="media/organigrama.jpg" alt="Organigrama de la empresa"></td>
+    <td width="50%"><img src="media/proyectos.jpg" alt="Gestión de proyectos"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Organigrama de la empresa</sub></td>
+    <td align="center"><sub>Gestión de proyectos</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="media/asignar_proyecto.jpg" alt="Asignación de empleados a proyectos"></td>
+    <td width="50%"><img src="media/registrar_horas.jpg" alt="Registro de horas"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Asignación de empleados a proyectos</sub></td>
+    <td align="center"><sub>Registro de horas</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="media/opciones_perfil.jpg" alt="Opciones de menú por perfil"></td>
+    <td width="50%"><img src="media/reporte.jpg" alt="Reporte de personal activo"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Opciones de menú por perfil</sub></td>
+    <td align="center"><sub>Reporte de personal activo</sub></td>
+  </tr>
+</table>
+
+## Funcionalidades
 
 **Talento humano y proyectos**
 - CRUD de empleados con datos personales, cargo, estado civil, formación académica y familiares.
 - Gestión de departamentos y proyectos; asignación de empleados a proyectos con conteo de personal.
+- **Registro de horas trabajadas** por proyecto, **aprobación** por parte del jefe y reportes de horas.
 - **Organigrama** de la empresa generado desde la base de datos.
 - **Reportes** de personal activo y roles listos para imprimir o exportar a PDF.
 
 **Seguridad**
 - Inicio de sesión con contraseñas cifradas mediante **SHA-256**.
 - **Política de contraseñas**: más de 8 caracteres, al menos una mayúscula y un número; cambio de clave por el usuario y por el administrador.
-- **Control de acceso por roles** (Administrador, Jefe, Empleado) con menús dinámicos según las opciones asignadas a cada perfil.
+- **Control de acceso por roles** (Administrador, Recursos Humanos, Jefe y Empleado), cada uno con su propio dashboard, con menús dinámicos según las opciones asignadas a cada perfil.
 - **Registro global de sesiones activas**: cuando el administrador cambia el rol o el estado de un usuario, su sesión se actualiza o invalida en tiempo real, sin que tenga que volver a entrar.
 - Filtro de codificación UTF-8 para toda la aplicación.
 
-## 🏗️ Arquitectura
+## Arquitectura
 
 Patrón **MVC** con capa de acceso a datos mediante **DAO**:
 
@@ -65,7 +105,7 @@ database/          Script completo, DDL, DML y migración
 docs/              Requisitos, UML, modelo de datos y documentación
 ```
 
-## 🗄️ Modelo de datos
+## Modelo de datos
 
 18 tablas con nomenclatura estandarizada por módulo: **PE** (personal), **GE** (gestión de proyectos) y **XE** (seguridad).
 
@@ -191,7 +231,7 @@ erDiagram
     }
 ```
 
-## 📐 Documentación de ingeniería
+## Documentación de ingeniería
 
 | Artefacto | Ubicación |
 |---|---|
@@ -208,7 +248,7 @@ erDiagram
 
 > Los diagramas están en formato **SAP PowerDesigner** (`.oom`, `.cdm`, `.ldm`, `.pdm`).
 
-## 🚀 Ejecución local
+## Ejecución local
 
 **Requisitos:** JDK 17+, Payara Server 6 / GlassFish 7, MySQL 8, NetBeans (recomendado) y el conector `mysql-connector-j-8.4.0.jar`.
 
@@ -222,10 +262,10 @@ export DB_USER="root"
 export DB_PASSWORD="tu_contraseña"
 
 # 3. Abrir el proyecto en NetBeans, agregar el conector MySQL a las librerías
-#    y ejecutarlo sobre Payara / GlassFish
+# y ejecutarlo sobre Payara / GlassFish
 ```
 
-## 👥 Equipo · Grupo 06
+## Equipo · Grupo 06
 
 | Integrante |
 |---|
